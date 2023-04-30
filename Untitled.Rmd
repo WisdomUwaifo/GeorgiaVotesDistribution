@@ -1,0 +1,60 @@
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)  
+library(patchwork)  
+library(GGally)     
+library(broom) 
+library(ggridges)
+library(dplyr)
+
+results_2016 <- read_csv("Data/results_2016.csv")
+```
+
+```{r}
+results_2016_filter <- results_2016 %>% 
+  select(totalvotes, median_age, state, county, total_population) %>%
+  filter(state == "Georgia") %>% 
+  filter(total_population >= 190000)
+
+```
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+ggplot(data = results_2016_filter,
+mapping = aes(x = median_age)) +
+geom_density(fill = "#6495ED")
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+ggplot(data = results_2016_filter,
+       mapping = aes(x = median_age, y = totalvotes, color = county)) +
+  geom_point() +
+  labs(guides = FALSE)
+
+```
+
+### Chart C
+
+```{r}
+
+```
+

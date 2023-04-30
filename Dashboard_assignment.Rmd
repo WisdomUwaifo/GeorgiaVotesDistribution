@@ -1,0 +1,72 @@
+---
+title: "Exercise 10"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)  
+library(patchwork)  
+library(GGally)     
+library(broom) 
+library(ggridges)
+library(dplyr)
+
+results_2016 <- read_csv("Data/results_2016.csv")
+```
+
+```{r}
+results_2016_filter <- results_2016 %>% 
+  select(totalvotes, median_age, state, county, total_population) %>%
+  filter(state == "Georgia") 
+```
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Age Distribution of Voters in the 2016 Presidential Election
+
+```{r}
+ggplot(data = results_2016_filter,
+mapping = aes(x = median_age)) +
+geom_density(fill = "#FF7F50")
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Proportion of Voters Who Identify as GOP In Selected States
+
+```{r}
+selected_states <- c("Georgia", "Florida", "South Carolina", "North Carolina", "Alabama", "Tennesse", "California", "Texas", "New York", "Washington", "Arizona", "Maryland", "Oklahoma", "Virgina", "Michigan")
+```
+
+```{r}
+results_2016_2 <- results_2016 %>% 
+  filter(state %in% selected_states)
+```
+
+```{r}
+ggplot(data = results_2016_2,
+       mapping = aes(x = percent_gop, y = state, fill = state)) +
+  geom_density_ridges(quantile_lines = TRUE, quantiles = 2) +
+  labs(y = "", x = "% of GOP votes in the selected States") +
+  guides(fill = "none")
+
+```
+
+### Proportion of Voters Who Identify as Democrats In Selected States
+
+```{r}
+ggplot(data = results_2016_2,
+       mapping = aes(x = percent_dem, y = state, fill = state)) +
+  geom_density_ridges(quantile_lines = TRUE, quantiles = 2) +
+  labs(y = "", x = "% of Democrats votes in the selected States") +
+  guides(fill = "none")
+```
+

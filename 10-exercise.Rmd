@@ -1,0 +1,63 @@
+---
+title: "Exercise 10"
+author: "Wisdom Uwaifo"
+date: "07/11/2022"
+output: html_document
+---
+
+# Task 1: Reflection
+
+***Have you seen examples of good dashboards before this class? Bad dashboards? What makes them good or bad?***
+Data visualization and dashboards are crucial components of data analytical strategies. However, it can be easy to get them wrong. To gain a better understanding of what makes a good or bad dashboard, it can be helpful to:
+1)	Consider your audience: you need to know who's going to use the dashboard and for what purpose they will use it to create the best analytical tool for them.
+2)	Determine your goals: you need to carefully consider what metrics and data sets will bring value to the goals that want to be measured or achieved with this dashboard.
+3)	Tell a story with your data: This is a fundamental step as an effective data story will close the gap between more technical users and the ones that have no closeness to analytics. And lastly, provide context and select the right type of dashboards.  
+
+
+
+# Task 2: Interactive plots
+
+```{r load-libraries-data, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(plotly)
+library(scales)
+
+# Load data here
+
+results_2016 <- read_csv("Data/results_2016.csv")
+```
+
+# The distribution of the proportion of votes by counties in Georgia 
+```{r}
+result_byrace <- results_2016 %>%
+  mutate(prop_county_vote = totalvotes/sum(totalvotes, na.rm = TRUE)) %>%
+ filter(state %in% c("Georgia", "Florida", "North Carolina", "South Carolina")) %>% 
+  mutate(my_label = paste0(county, ": ",percent(prop_county_vote, accuracy = 0.001)))
+```
+
+```{r}
+static_plot <- ggplot(result_byrace,
+       aes(y = fct_rev(state), x = prop_county_vote, color = state, text = my_label)) +
+  geom_point(position = position_jitter(width = 0, height = 0.15, seed = 1234)) +
+  guides(color = "none") +
+  scale_x_continuous(labels = percent) +
+  scale_color_manual(values = c("#425300", "#e680ff", "#01bd71", "#ff3aad",
+                                "#9f3e00", "#0146bf", "#671d56")) +
+  labs(x = "% of votes by county", y = NULL, caption = "Source: Kaggle") +
+  theme_bw() 
+```
+
+```{r}
+ggplotly(static_plot, tooltip = "text")
+```
+
+
+Do the following:
+
+1. Make a plot. Any kind of plot will do (though it might be easiest to work with `geom_point()`).
+
+2. Make the plot interactive with `ggplotly()`. 
+
+3. Make sure the hovering tooltip is more informative than the default.
+
+Good luck and have fun!
